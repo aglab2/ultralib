@@ -14,8 +14,8 @@ modified versions thereof.
  $Revision: 1.1 $
  $Author: doseki $
 ************************************************************************/
-#include <asm.h>
-#include <regdef.h>
+#include "asm.h"
+#include "regdef.h"
 
 /*
  * void guMtxIdent( Mtx * matrix )

@@ -1,5 +1,6 @@
 #include "PR/os_internal.h"
 #include "PR/R4300.h"
+#include "sys/asm.h"
 #include "osint.h"
 
 void osCreateThread(OSThread *t, OSId id, void (*entry)(void *), void *arg, void *sp, OSPri p) {
@@ -12,9 +13,13 @@ void osCreateThread(OSThread *t, OSId id, void (*entry)(void *), void *arg, void
     t->context.pc = (u32)entry;
     t->context.a0 = (s64)(s32)arg; // Double cast gets rid of compiler warning
     t->context.sp = (s64)(s32)sp - 16;
-    t->context.ra = (u64)__osCleanupThread;
+    t->context.ra = (u64)(u32)__osCleanupThread;
     mask = OS_IM_ALL;
-    t->context.sr = SR_IMASK | SR_EXL | SR_IE;
+    t->context.sr = SR_IMASK | SR_EXL | SR_IE
+#if (_MIPS_SIM == _MIPS_SIM_ABI64) || (_MIPS_SIM == _MIPS_SIM_NABI32)
+         | SR_FR
+#endif
+        ;
     t->context.rcp = (mask & RCP_IMASK) >> RCP_IMASKSHIFT;
     t->context.fpcsr = (u32)(FPCSR_FS | FPCSR_EV);
     t->fp = 0;

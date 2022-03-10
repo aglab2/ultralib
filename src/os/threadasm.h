@@ -64,5 +64,23 @@
 #define THREAD_FP26      408
 #define THREAD_FP28      416
 #define THREAD_FP30      424
+#if (_MIPS_SIM == _MIPS_SIM_ABI64) || (_MIPS_SIM == _MIPS_SIM_NABI32)
+#define THREAD_FP1       432
+#define THREAD_FP3       440
+#define THREAD_FP5       448
+#define THREAD_FP7       456
+#define THREAD_FP9       464
+#define THREAD_FP11      472
+#define THREAD_FP13      480
+#define THREAD_FP15      488
+#define THREAD_FP17      496
+#define THREAD_FP19      504
+#define THREAD_FP21      512
+#define THREAD_FP23      520
+#define THREAD_FP25      528
+#define THREAD_FP27      536
+#define THREAD_FP29      544
+#define THREAD_FP31      552
+#endif
 
 #endif

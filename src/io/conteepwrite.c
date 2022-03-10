@@ -106,8 +106,8 @@ s32 __osEepStatus(OSMesgQueue *mq, OSContStatus *data) {
     u8 *ptr = (u8 *)__osEepPifRam.ramarray;
     __OSContRequesFormat requestformat;
     
-    for (i = 0; i < ARRLEN(__osEepPifRam.ramarray) + 1; i++) {
-        __osEepPifRam.ramarray[i] = 0;
+    for (i = 0; i < sizeof(__osEepPifRam); i++) {
+        ((u8*)&__osEepPifRam)[i] = 0;
     }
 
     __osEepPifRam.pifstatus = CONT_CMD_EXE;

@@ -51,7 +51,7 @@ s32 __osContRamRead(OSMesgQueue* mq, int channel, u16 address, u8* buffer) {
         ret = CHNL_ERR(*READFORMAT(ptr));
 
         if (!ret) {
-            if (__osContDataCrc(&READFORMAT(ptr)->data) != READFORMAT(ptr)->datacrc) {
+            if (__osContDataCrc(READFORMAT(ptr)->data) != READFORMAT(ptr)->datacrc) {
                 ret = __osPfsGetStatus(mq, channel);
 
                 if (ret) {

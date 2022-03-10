@@ -15,8 +15,8 @@ modified versions thereof.
  $Author: doseki $
 ************************************************************************/
 
-#include <asm.h>
-#include <regdef.h>
+#include "asm.h"
+#include "regdef.h"
 
 /*
  * void guMtxCatF(float mf[4][4], float nf[4][4], float res[4][4])

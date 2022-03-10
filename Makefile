@@ -1,26 +1,30 @@
-NON_MATCHING ?= 0
+NON_MATCHING ?= 1
 
 TARGET := libgultra_rom
 BASE_DIR := base_$(TARGET)
 BASE_AR := $(TARGET).a
 BUILD_DIR := build
-BUILD_AR := $(BUILD_DIR)/$(TARGET).a
+BUILD_AR := $(BUILD_DIR)/$(TARGET)_n32.a
 
 WORKING_DIR := $(shell pwd)
 
 CPP := cpp -P
 AR := ar
-AS := tools/gcc/as
-CC := tools/gcc/gcc
-AR_OLD := tools/gcc/ar
+# AS := tools/gcc/as
+# CC := tools/gcc/gcc
+# AR_OLD := tools/gcc/ar
+CC := mips-linux-gnu-gcc
+AR_OLD := ar
 
-export COMPILER_PATH := $(WORKING_DIR)/tools/gcc
+# export COMPILER_PATH := $(WORKING_DIR)/tools/gcc
 
-CFLAGS := -w -nostdinc -c -G 0 -mgp32 -mfp32 -mips3 -D_LANGUAGE_C 
-ASFLAGS := -w -nostdinc -c -G 0 -mgp32 -mfp32 -mips3 -DMIPSEB -D_LANGUAGE_ASSEMBLY -D_MIPS_SIM=1 -D_ULTRA64 -x assembler-with-cpp
+# CFLAGS := -w -nostdinc -c -G 0 -mgp32 -mfp32 -mips3 -D_LANGUAGE_C 
+# ASFLAGS := -w -nostdinc -c -G 0 -mgp32 -mfp32 -mips3 -DMIPSEB -D_LANGUAGE_ASSEMBLY -D_MIPS_SIM=1 -D_ULTRA64 -x assembler-with-cpp
+CFLAGS  := -nostdinc -c -G 0 -mips3 -march=vr4300 -mabi=n32 -mfix4300 -mno-abicalls -fno-PIC -ffreestanding -fwrapv -fno-stack-protector -mno-check-zero-division -D_LANGUAGE_C  -Wall -Wno-missing-braces
+ASFLAGS := -nostdinc -c -G 0 -mips3 -march=vr4300 -mabi=n32 -mfix4300 -mno-abicalls -fno-PIC -ffreestanding -DMIPSEB -D_LANGUAGE_ASSEMBLY -D_ULTRA64 -x assembler-with-cpp
 GBIDEFINE := -DF3DEX_GBI_2
 CPPFLAGS = -D_MIPS_SZLONG=32 -D_FINALROM -D__USE_ISOC99 -DNDEBUG -I $(WORKING_DIR)/include -I $(WORKING_DIR)/include/gcc -I $(WORKING_DIR)/include/PR $(GBIDEFINE)
-OPTFLAGS := -O3
+OPTFLAGS := -Os
 
 SRC_DIRS := $(shell find src -type d)
 ASM_DIRS := $(shell find asm -type d -not -path "asm/non_matchings*")
@@ -91,15 +95,16 @@ ifneq ($(NON_MATCHING),1)
 # change file timestamps to match original
 	@touch -r $(BASE_DIR)/$(@F:.marker=.o) $(@:.marker=.o)
 	@$(COMPARE_OBJ)
-	@touch $@
 endif
+	@touch $@
 
 $(BUILD_DIR)/src/os/assert.marker: OPTFLAGS := -O0
 $(BUILD_DIR)/src/os/ackramromread.marker: OPTFLAGS := -O0
 $(BUILD_DIR)/src/os/ackramromwrite.marker: OPTFLAGS := -O0
 $(BUILD_DIR)/src/os/exit.marker: OPTFLAGS := -O0
 $(BUILD_DIR)/src/os/seterrorhandler.marker: OPTFLAGS := -O0
-$(BUILD_DIR)/src/gu/us2dex_emu.marker: GBIDEFINE := -DF3DEX_GBI
+$(BUILD_DIR)/src/gu/us2dex_emu.marker: GBIDEFINE :=
+$(BUILD_DIR)/src/gu/us2dex2_emu.marker: GBIDEFINE :=
 $(BUILD_DIR)/src/sp/sprite.marker: GBIDEFINE := 
 $(BUILD_DIR)/src/sp/spriteex.marker: GBIDEFINE := 
 $(BUILD_DIR)/src/sp/spriteex2.marker: GBIDEFINE := 
@@ -113,8 +118,8 @@ $(BUILD_DIR)/src/voice/%.marker: OPTFLAGS += -DLANG_JAPANESE -I$(WORKING_DIR)/sr
 $(BUILD_DIR)/src/voice/%.marker: CC := tools/compile_sjis.py -D__CC=$(WORKING_DIR)/$(CC)
 
 $(BUILD_DIR)/%.marker: %.c
-	cd $(<D) && $(WORKING_DIR)/$(CC) $(CFLAGS) $(CPPFLAGS) $(OPTFLAGS) $(<F) -o $(WORKING_DIR)/$(@:.marker=.o)
 ifneq ($(NON_MATCHING),1)
+	cd $(<D) && $(WORKING_DIR)/$(CC) $(CFLAGS) $(CPPFLAGS) $(OPTFLAGS) $(<F) -o $(WORKING_DIR)/$(@:.marker=.o)
 # check if this file is in the archive; patch corrupted bytes and change file timestamps to match original if so
 	@$(if $(findstring $(BASE_DIR)/$(@F:.marker=.o), $(BASE_OBJS)), \
 	 python3 tools/fix_objfile.py $(@:.marker=.o) $(BASE_DIR)/$(@F:.marker=.o) && \
@@ -123,12 +128,14 @@ ifneq ($(NON_MATCHING),1)
 	 echo "Object file $(<F:.marker=.o) is not in the current archive" \
 	)
 # create or update the marker file
-	@touch $@
+else
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(OPTFLAGS) $< -o $(@:.marker=.o)
 endif
+	@touch $@
 
 $(BUILD_DIR)/%.marker: %.s
-	cd $(<D) && $(WORKING_DIR)/$(CC) $(ASFLAGS) $(CPPFLAGS) -I. $(OPTFLAGS) $(<F) -o $(WORKING_DIR)/$(@:.marker=.o)
 ifneq ($(NON_MATCHING),1)
+	cd $(<D) && $(WORKING_DIR)/$(CC) $(ASFLAGS) $(CPPFLAGS) -I. $(OPTFLAGS) $(<F) -o $(WORKING_DIR)/$(@:.marker=.o)
 # check if this file is in the archive; patch corrupted bytes and change file timestamps to match original if so
 	@$(if $(findstring $(BASE_DIR)/$(@F:.marker=.o), $(BASE_OBJS)), \
 	 python3 tools/fix_objfile.py $(@:.marker=.o) $(BASE_DIR)/$(@F:.marker=.o) && \
@@ -137,8 +144,10 @@ ifneq ($(NON_MATCHING),1)
 	 echo "Object file $(<F:.marker=.o) is not in the current archive" \
 	)
 # create or update the marker file
-	@touch $@
+else
+	$(CC) $(ASFLAGS) $(CPPFLAGS) $(OPTFLAGS) $< -o $(@:.marker=.o)
 endif
+	@touch $@
 
 # Disable built-in rules
 .SUFFIXES:

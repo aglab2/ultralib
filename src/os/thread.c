@@ -19,7 +19,7 @@ void __osDequeueThread(OSThread **queue, OSThread *t) {
             *pred = t->next;
             return;
         }
-        pred = succ;
+        pred = &succ->next;
         succ = *pred;
     }
 }
