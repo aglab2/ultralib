@@ -1,3 +1,6 @@
+.set gp=64
+.set fp=64
+
 #include "PR/R4300.h"
 #include "sys/asm.h"
 #include "sys/regdef.h"
@@ -86,22 +89,23 @@ LEAF(__osException)
     /* say fp has not been used */
     sw zero, THREAD_FP(k0)
     /* this instruction is probably useless, leftover because of bad placement of an ifdef for the debug version */
-    STAY2(mfc0 t0, C0_CAUSE)
+    /* We need to use numbered registers between here and the end of saving context to support multiple ABIs */
+    STAY2(mfc0 $8, C0_CAUSE)
 
 savecontext:
-    move t0, k0
+    move $8, k0
     lw k0, __osRunningThread 
     
-    ld t1, THREAD_GP1(t0)
-    sd t1, THREAD_GP1(k0)
-    ld t1, THREAD_SR(t0)
-    sd t1, THREAD_SR(k0)
-    ld t1, THREAD_GP8(t0)
-    sd t1, THREAD_GP8(k0)
-    ld t1, THREAD_GP9(t0)
-    sd t1, THREAD_GP9(k0)
-    ld t1, THREAD_GP10(t0)
-    sd t1, THREAD_GP10(k0)
+    ld $9, THREAD_GP1($8)
+    sd $9, THREAD_GP1(k0)
+    ld $9, THREAD_SR($8)
+    sd $9, THREAD_SR(k0)
+    ld $9, THREAD_GP8($8)
+    sd $9, THREAD_GP8(k0)
+    ld $9, THREAD_GP9($8)
+    sd $9, THREAD_GP9(k0)
+    ld $9, THREAD_GP10($8)
+    sd $9, THREAD_GP10(k0)
     sd $2, THREAD_GP2(k0)
     sd $3, THREAD_GP3(k0)
     sd $4, THREAD_GP4(k0)

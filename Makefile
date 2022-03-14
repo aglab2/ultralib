@@ -20,10 +20,11 @@ AR_OLD := ar
 
 # CFLAGS := -w -nostdinc -c -G 0 -mgp32 -mfp32 -mips3 -D_LANGUAGE_C 
 # ASFLAGS := -w -nostdinc -c -G 0 -mgp32 -mfp32 -mips3 -DMIPSEB -D_LANGUAGE_ASSEMBLY -D_MIPS_SIM=1 -D_ULTRA64 -x assembler-with-cpp
-CFLAGS  := -nostdinc -c -G 0 -mips3 -march=vr4300 -mabi=n32 -mfix4300 -mno-abicalls -fno-PIC -ffreestanding -fwrapv -fno-stack-protector -mno-check-zero-division -D_LANGUAGE_C  -Wall -Wno-missing-braces
+CFLAGS  :=           -c -G 0 -mips3 -march=vr4300 -mabi=n32 -mfix4300 -mno-abicalls -fno-PIC -ffreestanding -fwrapv -fno-stack-protector -mno-check-zero-division -D_LANGUAGE_C  -Wall -Wno-missing-braces
 ASFLAGS := -nostdinc -c -G 0 -mips3 -march=vr4300 -mabi=n32 -mfix4300 -mno-abicalls -fno-PIC -ffreestanding -DMIPSEB -D_LANGUAGE_ASSEMBLY -D_ULTRA64 -x assembler-with-cpp
 GBIDEFINE := -DF3DEX_GBI_2
-CPPFLAGS = -D_MIPS_SZLONG=32 -D_FINALROM -D__USE_ISOC99 -DNDEBUG -I $(WORKING_DIR)/include -I $(WORKING_DIR)/include/gcc -I $(WORKING_DIR)/include/PR $(GBIDEFINE)
+# CPPFLAGS = -D_MIPS_SZLONG=32 -D_FINALROM -D__USE_ISOC99 -DNDEBUG -I $(WORKING_DIR)/include -I $(WORKING_DIR)/include/gcc -I $(WORKING_DIR)/include/PR $(GBIDEFINE)
+CPPFLAGS = -D_MIPS_SZLONG=32 -D_FINALROM -D__USE_ISOC99 -DNDEBUG -I $(WORKING_DIR)/include -I $(WORKING_DIR)/include/PR $(GBIDEFINE)
 OPTFLAGS := -Os
 
 SRC_DIRS := $(shell find src -type d)
