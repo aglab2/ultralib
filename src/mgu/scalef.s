@@ -29,19 +29,31 @@ modified versions thereof.
 LEAF( guScaleF )
 	.set reorder
 
+#if (!(_MIPS_SIM == _MIPS_SIM_ABI64 || _MIPS_SIM == _MIPS_SIM_NABI32))
 	sw	a1, 0(a0)
+#else
+	swc1	fa1, 0(a0)
+#endif
 	sw	zero, 4(a0)	/* line 1 */
 	sw	zero, 8(a0)
 	sw	zero, 12(a0)
 
 	sw	zero, 16(a0)	/* line 2 */
+#if (!(_MIPS_SIM == _MIPS_SIM_ABI64 || _MIPS_SIM == _MIPS_SIM_NABI32))
 	sw	a2, 20(a0)
+#else
+	swc1	fa2, 20(a0)
+#endif
 	sw	zero, 24(a0)
 	sw	zero, 28(a0)
 
 	sw	zero, 32(a0)	/* line 3 */
 	sw	zero, 36(a0)
+#if (!(_MIPS_SIM == _MIPS_SIM_ABI64 || _MIPS_SIM == _MIPS_SIM_NABI32))
 	sw	a3, 40(a0)
+#else
+	swc1	fa3, 40(a0)
+#endif
 	sw	zero, 44(a0)
 
 	li	t0, 0x3f800000	/* t0 = 1.0 */

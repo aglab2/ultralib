@@ -24,11 +24,18 @@ modified versions thereof.
  * ft0 : (float)0x00010000
  * ft1, ft2, ft3, t0 :	work reg 				 		
  */
+#if (!(_MIPS_SIM == _MIPS_SIM_ABI64 || _MIPS_SIM == _MIPS_SIM_NABI32))
 #define FTOFIX32(a, t)	\
 	mtc1		a, ft1		;	\
 	mul.s		ft2, ft1, ft0	;	\
 	trunc.w.s	ft3, ft2, t0	;	\
-	mfc1		t, ft3		; 
+	mfc1		t, ft3		;
+#else
+#define FTOFIX32(a, t)	\
+	mul.s		ft2, f##a, ft0	;	\
+	trunc.w.s	ft3, ft2, t0	;	\
+	mfc1		t, ft3		;
+#endif
 
 /* 
    void guScale(Mtx *m, float x, float y, float z)
