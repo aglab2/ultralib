@@ -10,7 +10,7 @@
 #define BUFF_LEN 0x20
 
 static s16 _Ldunscale(s16* pex, _Pft* px);
-static void _Genld(_Pft* px, char code, u8* p, s16 nsig, s16 xexp);
+static void _Genld(_Pft* px, char code, char* p, s16 nsig, s16 xexp);
 
 static const double pows[] = {10e0L, 10e1L, 10e3L, 10e7L, 10e15L, 10e31L, 10e63L, 10e127L, 10e255L};
 
@@ -158,7 +158,7 @@ void _Ldtob(_Pft* px, char code) {
 }
 
 s16 _Ldunscale(s16* pex, _Pft* px) {
-    u16* ps = px;
+    u16* ps = (u16*)px;
     s16 xchar = (ps[_D0] & _DMASK) >> _DOFF;
 
 
@@ -178,14 +178,14 @@ s16 _Ldunscale(s16* pex, _Pft* px) {
     }
 }
 
-void _Genld(_Pft* px, char code, u8* p, s16 nsig, s16 xexp) {
-    const unsigned char point = '.';
+void _Genld(_Pft* px, char code, char* p, s16 nsig, s16 xexp) {
+    const char point = '.';
 
     if (nsig <= 0) {
         nsig = 1, p = "0"; // memes
     }
 
-    if (code == 'f' || (code == 'g' || code == 'G') && xexp >= -4 && xexp < px->prec) {
+    if (code == 'f' || ((code == 'g' || code == 'G') && xexp >= -4 && xexp < px->prec)) {
         xexp += 1;
         if (code != 'f') {
             if (((px->flags & 8) == 0) && nsig < px->prec) {

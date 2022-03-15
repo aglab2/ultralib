@@ -20,8 +20,10 @@ AR_OLD := ar
 
 # CFLAGS := -w -nostdinc -c -G 0 -mgp32 -mfp32 -mips3 -D_LANGUAGE_C 
 # ASFLAGS := -w -nostdinc -c -G 0 -mgp32 -mfp32 -mips3 -DMIPSEB -D_LANGUAGE_ASSEMBLY -D_MIPS_SIM=1 -D_ULTRA64 -x assembler-with-cpp
-CFLAGS  :=           -c -G 0 -mips3 -march=vr4300 -mabi=n32 -mfix4300 -mno-abicalls -fno-PIC -ffreestanding -fwrapv -fno-stack-protector -mno-check-zero-division -D_LANGUAGE_C  -Wall -Wno-missing-braces
-ASFLAGS := -nostdinc -c -G 0 -mips3 -march=vr4300 -mabi=n32 -mfix4300 -mno-abicalls -fno-PIC -ffreestanding -DMIPSEB -D_LANGUAGE_ASSEMBLY -D_ULTRA64 -x assembler-with-cpp
+# CFLAGS  :=           -c -G 0 -mips3 -march=vr4300 -mabi=n32 -mfix4300 -mno-abicalls -fno-PIC -ffreestanding -fwrapv -fno-stack-protector -mno-check-zero-division -D_LANGUAGE_C  -Wall -Wno-missing-braces
+# ASFLAGS := -nostdinc -c -G 0 -mips3 -march=vr4300 -mabi=n32 -mfix4300 -mno-abicalls -fno-PIC -ffreestanding -DMIPSEB -D_LANGUAGE_ASSEMBLY -D_ULTRA64 -x assembler-with-cpp
+CFLAGS  :=           -c -G 0 -mips3 -march=vr4300 -mabi=eabi -mgp32 -mfp32 -mfix4300 -mno-abicalls -fno-PIC -ffreestanding -fwrapv -fno-stack-protector -mno-check-zero-division -D_LANGUAGE_C  -Wall -Wno-missing-braces
+ASFLAGS := -nostdinc -c -G 0 -mips3 -march=vr4300 -mabi=eabi -mgp32 -mfp32 -mfix4300 -mno-abicalls -fno-PIC -ffreestanding -DMIPSEB -D_LANGUAGE_ASSEMBLY -D_ULTRA64 -x assembler-with-cpp
 GBIDEFINE := -DF3DEX_GBI_2
 # CPPFLAGS = -D_MIPS_SZLONG=32 -D_FINALROM -D__USE_ISOC99 -DNDEBUG -I $(WORKING_DIR)/include -I $(WORKING_DIR)/include/gcc -I $(WORKING_DIR)/include/PR $(GBIDEFINE)
 CPPFLAGS = -D_MIPS_SZLONG=32 -D_FINALROM -D__USE_ISOC99 -DNDEBUG -I $(WORKING_DIR)/include -I $(WORKING_DIR)/include/PR $(GBIDEFINE)
@@ -115,8 +117,7 @@ $(BUILD_DIR)/src/mgu/rotate.marker: export VR4300MUL := ON
 $(BUILD_DIR)/src/os/%.marker: ASFLAGS += -P
 $(BUILD_DIR)/src/gu/%.marker: ASFLAGS += -P
 $(BUILD_DIR)/src/libc/%.marker: ASFLAGS += -P
-$(BUILD_DIR)/src/voice/%.marker: OPTFLAGS += -DLANG_JAPANESE -I$(WORKING_DIR)/src -I$(WORKING_DIR)/src/voice
-$(BUILD_DIR)/src/voice/%.marker: CC := tools/compile_sjis.py -D__CC=$(WORKING_DIR)/$(CC)
+$(BUILD_DIR)/src/voice/%.marker: CC := tools/compile_sjis.py -D__CC=$(CC)
 
 $(BUILD_DIR)/%.marker: %.c
 ifneq ($(NON_MATCHING),1)

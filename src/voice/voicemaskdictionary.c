@@ -1,5 +1,5 @@
 #include "PR/os_internal.h"
-#include "io/controller.h"
+#include "../io/controller.h"
 #include "PR/os_voice.h"
 #include "voiceinternal.h"
 
@@ -35,7 +35,7 @@ s32 osVoiceMaskDictionary(OSVoiceHandle* hd, u8* pattern, int size) {
         buf[ARRLEN(buf) - 1] = 0;
     }
 
-    ret = __osVoiceContWrite20(hd->__mq, hd->__channel, 0, &buf);
+    ret = __osVoiceContWrite20(hd->__mq, hd->__channel, 0, buf);
     if (ret == 0) {
         ret = __osVoiceCheckResult(hd, &stat);
         if (ret & 0xFF00) {

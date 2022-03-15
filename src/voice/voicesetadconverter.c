@@ -1,12 +1,13 @@
 #include "PR/os_internal.h"
-#include "io/controller.h"
+#include "../io/controller.h"
 #include "PR/os_voice.h"
 #include "voiceinternal.h"
-#include "io/controller_voice.h"
+#include "../io/controller_voice.h"
+#include "../io/siint.h"
 
 #define SWRITEFORMAT(p) ((__OSVoiceSWriteFormat*)(p))
 
-s32 __osVoiceSetADConverter(OSMesgQueue* mq, s32 channel, u8 data) {
+s32 __osVoiceSetADConverter(OSMesgQueue* mq, int channel, u8 data) {
     s32 ret;
     int i;
     u8* ptr;

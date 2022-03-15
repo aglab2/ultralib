@@ -1,8 +1,9 @@
 #include "PR/os_internal.h"
-#include "io/controller.h"
+#include "../io/controller.h"
 #include "PR/os_voice.h"
 #include "voiceinternal.h"
-#include "io/controller_voice.h"
+#include "../io/controller_voice.h"
+#include "../io/siint.h"
 
 #define READ36FORMAT(p) ((__OSVoiceRead36Format*)(ptr))
 
@@ -51,7 +52,7 @@ s32 __osVoiceContRead36(OSMesgQueue* mq, s32 channel, u16 address, u8* buffer) {
         ret = CHNL_ERR(*READ36FORMAT(ptr));
 
         if (ret == 0) {
-            if (__osVoiceContDataCrc(&READ36FORMAT(ptr)->data, ARRLEN(READ36FORMAT(ptr)->data)) != READ36FORMAT(ptr)->datacrc) {
+            if (__osVoiceContDataCrc(READ36FORMAT(ptr)->data, ARRLEN(READ36FORMAT(ptr)->data)) != READ36FORMAT(ptr)->datacrc) {
                 ret = __osVoiceGetStatus(mq, channel, &status);
                 if (ret != 0) {
                     break;
@@ -59,7 +60,7 @@ s32 __osVoiceContRead36(OSMesgQueue* mq, s32 channel, u16 address, u8* buffer) {
 
                 ret = CONT_ERR_CONTRFAIL;
             } else {
-                bcopy(&READ36FORMAT(ptr)->data, buffer, ARRLEN(READ36FORMAT(ptr)->data));
+                bcopy(READ36FORMAT(ptr)->data, buffer, ARRLEN(READ36FORMAT(ptr)->data));
             }
         } else {
             ret = CONT_ERR_NO_CONTROLLER;
