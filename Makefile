@@ -1,33 +1,50 @@
 NON_MATCHING ?= 1
 
+ABI ?= o32
+
 TARGET := libgultra_rom
 BASE_DIR := base_$(TARGET)
 BASE_AR := $(TARGET).a
 BUILD_DIR := build
-BUILD_AR := $(BUILD_DIR)/$(TARGET)_eabi.a
+BUILD_AR := $(BUILD_DIR)/$(TARGET)_$(ABI).a
 
 WORKING_DIR := $(shell pwd)
 
 CPP := cpp -P
 AR := ar
-# AS := tools/gcc/as
-# CC := tools/gcc/gcc
-# AR_OLD := tools/gcc/ar
-CC := mips-linux-gnu-gcc
-AR_OLD := ar
+AS := tools/gcc/as
+CC := tools/gcc/gcc
+AR_OLD := tools/gcc/ar
 
 # export COMPILER_PATH := $(WORKING_DIR)/tools/gcc
 
-# CFLAGS := -w -nostdinc -c -G 0 -mgp32 -mfp32 -mips3 -D_LANGUAGE_C 
-# ASFLAGS := -w -nostdinc -c -G 0 -mgp32 -mfp32 -mips3 -DMIPSEB -D_LANGUAGE_ASSEMBLY -D_MIPS_SIM=1 -D_ULTRA64 -x assembler-with-cpp
-# CFLAGS  :=           -c -G 0 -mips3 -march=vr4300 -mabi=n32 -mfix4300 -mno-abicalls -fno-PIC -ffreestanding -fwrapv -fno-stack-protector -mno-check-zero-division -D_LANGUAGE_C  -Wall -Wno-missing-braces
-# ASFLAGS := -nostdinc -c -G 0 -mips3 -march=vr4300 -mabi=n32 -mfix4300 -mno-abicalls -fno-PIC -ffreestanding -DMIPSEB -D_LANGUAGE_ASSEMBLY -D_ULTRA64 -x assembler-with-cpp
-CFLAGS  :=           -c -G 0 -mips3 -march=vr4300 -mabi=eabi -mgp32 -mfp32 -mfix4300 -mno-abicalls -fno-PIC -ffreestanding -fwrapv -fno-stack-protector -mno-check-zero-division -D_LANGUAGE_C  -Wall -Wno-missing-braces
-ASFLAGS := -nostdinc -c -G 0 -mips3 -march=vr4300 -mabi=eabi -mgp32 -mfp32 -mfix4300 -mno-abicalls -fno-PIC -ffreestanding -DMIPSEB -D_LANGUAGE_ASSEMBLY -D_ULTRA64 -x assembler-with-cpp
-GBIDEFINE := -DF3DEX_GBI_2
-# CPPFLAGS = -D_MIPS_SZLONG=32 -D_FINALROM -D__USE_ISOC99 -DNDEBUG -I $(WORKING_DIR)/include -I $(WORKING_DIR)/include/gcc -I $(WORKING_DIR)/include/PR $(GBIDEFINE)
-CPPFLAGS = -D_MIPS_SZLONG=32 -D_FINALROM -D__USE_ISOC99 -DNDEBUG -I $(WORKING_DIR)/include -I $(WORKING_DIR)/include/PR $(GBIDEFINE) -I.
+ifeq ($(ABI),eabi)
+IFLAGS := -I $(WORKING_DIR)/include -I $(WORKING_DIR)/include/gcc -I $(WORKING_DIR)/include/PR -I.
+ABIFLAGS := -mabi=eabi -mgp32 -mfp32
+AR_OLD := ar
+AS := mips-linux-gnu-as
+CC := mips-linux-gnu-gcc
+endif
+
+ifeq ($(ABI),n32)
+IFLAGS := -I $(WORKING_DIR)/include -I $(WORKING_DIR)/include/gcc -I $(WORKING_DIR)/include/PR -I.
+ABIFLAGS := -mabi=n32
+AR_OLD := ar
+AS := mips-linux-gnu-as
+CC := mips-linux-gnu-gcc
+endif
+
+ifeq ($(DEBUG_BUILD),1)
+OPTFLAGS := -Og -g
+else
 OPTFLAGS := -Os
+DFLAGS := -DNDEBUG -D_FINALROM
+endif
+
+CFLAGS  :=           -c -G 0 -mips3 -march=vr4300 $(ABIFLAGS) -mfix4300 -mno-abicalls -fno-PIC -ffreestanding -fwrapv -fno-stack-protector -mno-check-zero-division -D_LANGUAGE_C -Wall -Wno-missing-braces
+ASFLAGS := -nostdinc -c -G 0 -mips3 -march=vr4300 $(ABIFLAGS) -mfix4300 -mno-abicalls -fno-PIC -ffreestanding -DMIPSEB -D_LANGUAGE_ASSEMBLY -D_ULTRA64 -x assembler-with-cpp
+GBIDEFINE := -DF3DEX_GBI_2
+CPPFLAGS = -D_MIPS_SZLONG=32 -D__USE_ISOC99 $(DFLAGS) $(IFLAGS) $(GBIDEFINE)
 
 SRC_DIRS := $(shell find src -type d)
 ASM_DIRS := $(shell find asm -type d -not -path "asm/non_matchings*")
@@ -101,11 +118,13 @@ ifneq ($(NON_MATCHING),1)
 endif
 	@touch $@
 
+ifeq ($(NON_MATCHING),0)
 $(BUILD_DIR)/src/os/assert.marker: OPTFLAGS := -O0
 $(BUILD_DIR)/src/os/ackramromread.marker: OPTFLAGS := -O0
 $(BUILD_DIR)/src/os/ackramromwrite.marker: OPTFLAGS := -O0
 $(BUILD_DIR)/src/os/exit.marker: OPTFLAGS := -O0
 $(BUILD_DIR)/src/os/seterrorhandler.marker: OPTFLAGS := -O0
+endif
 $(BUILD_DIR)/src/gu/us2dex_emu.marker: GBIDEFINE :=
 $(BUILD_DIR)/src/gu/us2dex2_emu.marker: GBIDEFINE :=
 $(BUILD_DIR)/src/sp/sprite.marker: GBIDEFINE := 
