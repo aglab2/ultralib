@@ -4,7 +4,7 @@ TARGET := libgultra_rom
 BASE_DIR := base_$(TARGET)
 BASE_AR := $(TARGET).a
 BUILD_DIR := build
-BUILD_AR := $(BUILD_DIR)/$(TARGET)_n32.a
+BUILD_AR := $(BUILD_DIR)/$(TARGET)_eabi.a
 
 WORKING_DIR := $(shell pwd)
 
@@ -26,7 +26,7 @@ CFLAGS  :=           -c -G 0 -mips3 -march=vr4300 -mabi=eabi -mgp32 -mfp32 -mfix
 ASFLAGS := -nostdinc -c -G 0 -mips3 -march=vr4300 -mabi=eabi -mgp32 -mfp32 -mfix4300 -mno-abicalls -fno-PIC -ffreestanding -DMIPSEB -D_LANGUAGE_ASSEMBLY -D_ULTRA64 -x assembler-with-cpp
 GBIDEFINE := -DF3DEX_GBI_2
 # CPPFLAGS = -D_MIPS_SZLONG=32 -D_FINALROM -D__USE_ISOC99 -DNDEBUG -I $(WORKING_DIR)/include -I $(WORKING_DIR)/include/gcc -I $(WORKING_DIR)/include/PR $(GBIDEFINE)
-CPPFLAGS = -D_MIPS_SZLONG=32 -D_FINALROM -D__USE_ISOC99 -DNDEBUG -I $(WORKING_DIR)/include -I $(WORKING_DIR)/include/PR $(GBIDEFINE)
+CPPFLAGS = -D_MIPS_SZLONG=32 -D_FINALROM -D__USE_ISOC99 -DNDEBUG -I $(WORKING_DIR)/include -I $(WORKING_DIR)/include/PR $(GBIDEFINE) -I.
 OPTFLAGS := -Os
 
 SRC_DIRS := $(shell find src -type d)
@@ -117,7 +117,7 @@ $(BUILD_DIR)/src/mgu/rotate.marker: export VR4300MUL := ON
 $(BUILD_DIR)/src/os/%.marker: ASFLAGS += -P
 $(BUILD_DIR)/src/gu/%.marker: ASFLAGS += -P
 $(BUILD_DIR)/src/libc/%.marker: ASFLAGS += -P
-$(BUILD_DIR)/src/voice/%.marker: CC := tools/compile_sjis.py -D__CC=$(CC)
+$(BUILD_DIR)/src/voice/%.marker: CC := tools/compile_sjis.py -D__CC=$(CC) -Isrc/voice/
 
 $(BUILD_DIR)/%.marker: %.c
 ifneq ($(NON_MATCHING),1)
