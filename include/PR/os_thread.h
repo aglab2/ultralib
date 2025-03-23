@@ -48,17 +48,7 @@ extern "C" {
 typedef s32 OSPri;
 typedef s32 OSId;
 
-#if (!(_MIPS_SIM == _MIPS_SIM_ABI64 || _MIPS_SIM == _MIPS_SIM_NABI32))
-typedef union {
-    struct {
-        f32 f_odd;
-        f32 f_even;
-    } f;
-    f64 d;
-} __OSfp;
-#else
 typedef f64 __OSfp;
-#endif
 
 typedef struct {
     u64 at, v0, v1, a0, a1, a2, a3;
@@ -71,10 +61,8 @@ typedef struct {
     u32 fpcsr;
     __OSfp  fp0,  fp2,  fp4,  fp6,  fp8, fp10, fp12, fp14;
     __OSfp fp16, fp18, fp20, fp22, fp24, fp26, fp28, fp30;
-#if (_MIPS_SIM == _MIPS_SIM_ABI64) || (_MIPS_SIM == _MIPS_SIM_NABI32)
     __OSfp  fp1,  fp3,  fp5,  fp7,  fp9, fp11, fp13, fp15;
     __OSfp fp17, fp19, fp21, fp23, fp25, fp27, fp29, fp31;
-#endif
 } __OSThreadContext;
 
 typedef struct {

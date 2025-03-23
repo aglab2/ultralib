@@ -209,7 +209,6 @@ endrcp:
     sdc1 $f26, THREAD_FP26(k0)
     sdc1 $f28, THREAD_FP28(k0)
     sdc1 $f30, THREAD_FP30(k0)
-#if (_MIPS_SIM == _MIPS_SIM_ABI64) || (_MIPS_SIM == _MIPS_SIM_NABI32)
     sdc1 $f1, THREAD_FP1(k0)
     sdc1 $f3, THREAD_FP3(k0)
     sdc1 $f5, THREAD_FP5(k0)
@@ -226,7 +225,6 @@ endrcp:
     sdc1 $f27, THREAD_FP27(k0)
     sdc1 $f29, THREAD_FP29(k0)
     sdc1 $f31, THREAD_FP31(k0)
-#endif
     UNSET64
 1:
     STAY2(mfc0 t0, C0_CAUSE)
@@ -726,7 +724,6 @@ __osDispatchThreadSave:
     ldc1 $f26, THREAD_FP26(k0)
     ldc1 $f28, THREAD_FP28(k0)
     ldc1 $f30, THREAD_FP30(k0)
-#if (_MIPS_SIM == _MIPS_SIM_ABI64) || (_MIPS_SIM == _MIPS_SIM_NABI32)
     ldc1 $f1, THREAD_FP1(k0)
     ldc1 $f3, THREAD_FP3(k0)
     ldc1 $f5, THREAD_FP5(k0)
@@ -743,7 +740,6 @@ __osDispatchThreadSave:
     ldc1 $f27, THREAD_FP27(k0)
     ldc1 $f29, THREAD_FP29(k0)
     ldc1 $f31, THREAD_FP31(k0)
-#endif
     UNSET64
     
 1:

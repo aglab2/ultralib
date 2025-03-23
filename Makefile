@@ -1,6 +1,6 @@
 NON_MATCHING ?= 1
 
-ABI ?= o32
+ABI ?= eabi
 
 TARGET := libgultra_rom
 BASE_DIR := base_$(TARGET)
@@ -20,24 +20,32 @@ AR_OLD := tools/gcc/ar
 
 ifeq ($(ABI),eabi)
 IFLAGS := -I $(WORKING_DIR)/include -I $(WORKING_DIR)/include/gcc -I $(WORKING_DIR)/include/PR -I.
-ABIFLAGS := -mabi=eabi -mgp32 -mfp32
+ABIFLAGS := -mabi=eabi -mgp32 -mfp32 -modd-spreg
 AR_OLD := ar
-AS := mips-linux-gnu-as
-CC := mips-linux-gnu-gcc
+AS := mips-n64-as
+CC := mips-n64-gcc
 endif
 
 ifeq ($(ABI),n32)
 IFLAGS := -I $(WORKING_DIR)/include -I $(WORKING_DIR)/include/gcc -I $(WORKING_DIR)/include/PR -I.
 ABIFLAGS := -mabi=n32
 AR_OLD := ar
-AS := mips-linux-gnu-as
-CC := mips-linux-gnu-gcc
+AS := mips-n64-as
+CC := mips-n64-gcc
+endif
+
+ifeq ($(ABI),o32)
+IFLAGS := -I $(WORKING_DIR)/include -I $(WORKING_DIR)/include/gcc -I $(WORKING_DIR)/include/PR -I.
+ABIFLAGS := -mabi=32
+AR_OLD := ar
+AS := mips-n64-as
+CC := mips-n64-gcc
 endif
 
 ifeq ($(DEBUG_BUILD),1)
 OPTFLAGS := -Og -g
 else
-OPTFLAGS := -Os
+OPTFLAGS := -Os -ffast-math -ftrapping-math -fno-associative-math -mno-check-zero-division
 DFLAGS := -DNDEBUG -D_FINALROM
 endif
 
