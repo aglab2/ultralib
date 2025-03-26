@@ -573,11 +573,17 @@ LEAF(__osEnqueueAndYield)
     sw k1, THREAD_FPCSR(a1)
     SET64
     swc1 $f20, THREAD_FP20(a1)
+    swc1 $f21, THREAD_FP21(a1)
     swc1 $f22, THREAD_FP22(a1)
+    swc1 $f23, THREAD_FP23(a1)
     swc1 $f24, THREAD_FP24(a1)
+    swc1 $f25, THREAD_FP25(a1)
     swc1 $f26, THREAD_FP26(a1)
+    swc1 $f27, THREAD_FP27(a1)
     swc1 $f28, THREAD_FP28(a1)
+    swc1 $f29, THREAD_FP29(a1)
     swc1 $f30, THREAD_FP30(a1)
+    swc1 $f31, THREAD_FP31(a1)
     UNSET64
 1:
     lw k1, THREAD_SR(a1)
