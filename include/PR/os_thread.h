@@ -48,7 +48,7 @@ extern "C" {
 typedef s32 OSPri;
 typedef s32 OSId;
 
-typedef f64 __OSfp;
+typedef f32 __OSfp;
 
 typedef struct {
     u64 at, v0, v1, a0, a1, a2, a3;
@@ -59,10 +59,7 @@ typedef struct {
     u64 lo, hi;
     u32 sr, pc, cause, badvaddr, rcp;
     u32 fpcsr;
-    __OSfp  fp0,  fp2,  fp4,  fp6,  fp8, fp10, fp12, fp14;
-    __OSfp fp16, fp18, fp20, fp22, fp24, fp26, fp28, fp30;
-    __OSfp  fp1,  fp3,  fp5,  fp7,  fp9, fp11, fp13, fp15;
-    __OSfp fp17, fp19, fp21, fp23, fp25, fp27, fp29, fp31;
+    __OSfp fp[32];
 } __OSThreadContext;
 
 typedef struct {

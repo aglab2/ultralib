@@ -20,7 +20,7 @@ AR_OLD := tools/gcc/ar
 
 ifeq ($(ABI),eabi)
 IFLAGS := -I $(WORKING_DIR)/include -I $(WORKING_DIR)/include/gcc -I $(WORKING_DIR)/include/PR -I.
-ABIFLAGS := -mabi=eabi -mgp32 -mfp32 -modd-spreg
+ABIFLAGS := -mabi=eabi -mgp32 -mfp32 -msingle-float -modd-spreg
 AR_OLD := ar
 AS := mips-n64-as
 CC := mips-n64-gcc
